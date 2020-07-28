@@ -11,7 +11,8 @@ const table = base.table(process.env.AIRTABLE_TABLE)
 
 exports.handler = async (event) => { 
     try {
-        const records = await table.select({}).firstPage() //this calls a promise, needs to await response
+        const records = await table.select({sort:[{field: "score", direction: "desc"}],
+            filterByFormula: `AND(name != '', score >0)`}).firstPage() //this calls a promise, needs to await response
         const formattedRecords = records.map((record) => ({
             id: record.id,
             fields: record.fields,
