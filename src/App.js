@@ -15,12 +15,26 @@ import Game from './pages/Game'
 import GameOver from './pages/GameOver'
 import HighScores from './pages/HighScores'
 import Home from './pages/Home'
-import Navbar from './components/Navbar';
+import Navbar from './components/Navbar'
 import { Container } from './styled/Container'
 import { Main } from './styled/Main'
 import Global  from './styled/Global'
+import { useAuth0 } from './auth'
 
-function App() {
+
+  /*destructuring loading property from useAuth0. If page is loading return a <p> tag showing
+  page is Loading. The Auth0 SDK has some behind the scenes processing to determine when user
+  refreshes the page if user is actually logged in. While process is occurring, get access 
+  to the loading property.  */
+  function App() {
+    const { loading } = useAuth0();
+
+    if (loading) {
+        return <p>Loading...</p>;
+    }
+
+
+
   return (
     <Router>
       <Global />
