@@ -17,7 +17,8 @@ Using Saas to target...from the element that I am in (which is the StyleNavBrand
 text-decoration to none. Can now replace the <div> surrounding the brand with StyledNavBrand.  
 */
 export const StyledNavbrand = styled.div`
-    font-size: 1.4rem;
+    font-size: 24px; /*1.4rem */
+    text-align: left;
 
     & > a {
         text-decoration: none;

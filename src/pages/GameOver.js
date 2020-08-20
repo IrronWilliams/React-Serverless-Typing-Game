@@ -8,25 +8,59 @@ Added StyleLinks to ask user to Go Home or Play Again.
 
 */
 
+import React, { useEffect, useState } from 'react' 
+import { useScore } from '../contexts/ScoreContext' 
+import { StyledLink } from '../styled/NavBar' 
+import { StyledCharacter } from '../styled/Game' 
 
-import React from 'react'
-import { useScore } from '../contexts/ScoreContext'
-import { StyledLink } from '../styled/NavBar'
-
-export default function GameOver( {history} ) {
-    const [score] = useScore()
+export default function GameOver({ history }) {
+    const [score] = useScore() 
+    const [scoreMessage, setScoreMessage] = useState('') 
 
     if (score === -1) {
-        history.push('/')
+        history.push('/') 
     }
 
+     /*When this component mounts, will try to save the high score. When saveHighScore function will determine if the score
+    was saved or not. Based upon what the function returns, determine what message to display to user. */
+    useEffect(() => {
+        const saveHighScore = async () => {
+            try {
+                const options = {
+                    method: 'POST',
+                    body: JSON.stringify({ name: 'Asha', score }),
+                } 
+                const res = await fetch(
+                    '/.netlify/functions/saveHighScores',
+                    options
+                ) 
+                const data = await res.json() 
+                console.log(data)
+                
+                if (data.id) {
+                    setScoreMessage('Congrats! You got a high score!!') 
+                } else {
+                    setScoreMessage('Sorry, not a high score. Keep trying!') 
+                }
+            } catch (err) {
+                console.error(err) 
+            }
+        } 
+        saveHighScore() 
+    }, [score]) 
     return (
         <div>
-            <h1>GameOver</h1>
-            <p>{score}</p>
-            <StyledLink to='/'>Go Home</StyledLink>
-            <StyledLink to='/game'>Play Again?</StyledLink>
+            <h1>Game Over</h1>
+            <h2>{scoreMessage}</h2>
+
+            <StyledCharacter>{score}</StyledCharacter>
+            <div>
+                <StyledLink to="/">Go Home</StyledLink>
+            </div>
+            <div>
+                <StyledLink to="/game">Play Again</StyledLink>
+            </div>
         </div>
-        
-)
+    ) 
 }
+

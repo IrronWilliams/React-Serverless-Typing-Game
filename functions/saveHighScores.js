@@ -1,33 +1,52 @@
-require('dotenv').config()
-
-const Airtable = require('airtable')
-
-Airtable.configure({
-    apiKey: process.env.AIRTABLE_API_KEY, //referencing environment variable from .env 
-})
-
-const base = Airtable.base(process.env.AIRTABLE_BASE)
-const table = base.table(process.env.AIRTABLE_TABLE)
+//destructure the table and function and require in the file 
+const { table, getHighScores } = require('./utils/airtable') 
 
 exports.handler = async (event) => {
-    try {
-        const records = await table.select({
-            sort: [{ field: "score", direction: "desc" }],
-            filterByFormula: `AND(name != '', score >0)`
-        }).firstPage() //this calls a promise, needs to await response
-        const formattedRecords = records.map((record) => ({
-            id: record.id,
-            fields: record.fields,
-        }))
+    if (event.httpMethod !== 'POST') {
         return {
-            statusCode: 200,
-            body: JSON.stringify(formattedRecords) //returns an array
-        }
-    } catch (err) {
-        return {
-            statusCode: 500,
-            body: JSON.stringify({ err: "Failed to query records in AirTable" })
-        }
+            statusCode: 405,
+            body: JSON.stringify({ err: 'That method is not allowed' }),
+        } 
     }
 
-}
+    const { score, name } = JSON.parse(event.body) 
+    if (typeof score === 'undefined' || !name) {  //if (!score || !name) will lead to bad request error because 0 is a falsey value. conditional will assume there is no value
+        return {
+            statusCode: 400,
+            body: JSON.stringify({ err: 'Bad request. Not all required parameters were passed.' }),
+        } 
+    }
+    try {
+        const records = await getHighScores(false) 
+
+        const lowestRecord = records[9] 
+        if (
+            typeof lowestRecord.fields.score === 'undefined' ||
+            score > lowestRecord.fields.score
+        ) {
+            //update this record with the incoming score
+            const updatedRecord = {
+                id: lowestRecord.id,
+                fields: { name, score },
+            } 
+            await table.update([updatedRecord]) 
+            return {
+                statusCode: 200,
+                body: JSON.stringify(updatedRecord),
+            } 
+        } else {
+            return {
+                statusCode: 200,
+                body: JSON.stringify({}),
+            } 
+        }
+    } catch (err) {
+        console.error(err) 
+        return {
+            statusCode: 500,
+            body: JSON.stringify({
+                err: 'Failed to save score in Airtable',
+            }),
+        } 
+    }
+} 
