@@ -1,7 +1,17 @@
 //destructure the table and function and require in the file 
 const { table, getHighScores } = require('./utils/airtable') 
+const { getAccessTokenFromHeaders } = require('./utils/auth')
 
+//if token not returned, user is not authorized to do this. user has not logged in. not able to log high score
 exports.handler = async (event) => {
+    const token = getAccessTokenFromHeaders(event.headers);
+    if (!token) {
+        return {
+            statusCode: 403,
+            body: JSON.stringify({ err: 'User is not logged in' }),
+        }
+    }
+
     if (event.httpMethod !== 'POST') {
         return {
             statusCode: 405,
