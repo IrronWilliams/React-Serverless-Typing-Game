@@ -1,4 +1,5 @@
 {
     "domain": "learn-build-type-iw.us.auth0.com",
-    "clientId": "i0xR31hyJGkUHZAEUiKdo8j1xgaMoBRU"
+    "clientId": "i0xR31hyJGkUHZAEUiKdo8j1xgaMoBRU",
+    "audience": "https://learnbuildtypeapi/"
 }

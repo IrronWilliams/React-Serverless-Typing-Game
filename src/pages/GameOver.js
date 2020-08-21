@@ -12,23 +12,32 @@ import React, { useEffect, useState } from 'react'
 import { useScore } from '../contexts/ScoreContext' 
 import { StyledLink } from '../styled/NavBar' 
 import { StyledCharacter } from '../styled/Game' 
+import { useAuth0 } from '../auth'
 
 export default function GameOver({ history }) {
     const [score] = useScore() 
     const [scoreMessage, setScoreMessage] = useState('') 
+    const { isAuthenticated, getTokenSilently } = useAuth0()
 
     if (score === -1) {
         history.push('/') 
     }
 
-     /*When this component mounts, will try to save the high score. When saveHighScore function will determine if the score
-    was saved or not. Based upon what the function returns, determine what message to display to user. */
+    /*When this component mounts, will try to save the high score. When saveHighScore function will determine if the score
+    was saved or not. Based upon what the function returns, determine what message to display to user. Ensuring that the 
+    access token is included inside the request. Helps confirm that when user saves a score, user comes from the correct site. 
+    When function runs, 
+    authorization */
     useEffect(() => {
         const saveHighScore = async () => {
             try {
+                const token = await getTokenSilently() 
                 const options = {
                     method: 'POST',
-                    body: JSON.stringify({ name: 'Asha', score }),
+                    body: JSON.stringify({ name: 'Ado', score }),
+                    headers: {
+                        authorization: `Bearer ${token}`,
+                    },
                 } 
                 const res = await fetch(
                     '/.netlify/functions/saveHighScores',
@@ -46,12 +55,18 @@ export default function GameOver({ history }) {
                 console.error(err) 
             }
         } 
-        saveHighScore() 
-    }, [score]) 
+        if (isAuthenticated) {
+            saveHighScore()
+        }
+     }, [score, isAuthenticated, getTokenSilently]) 
     return (
         <div>
             <h1>Game Over</h1>
             <h2>{scoreMessage}</h2>
+
+            {!isAuthenticated && (
+                <p>You should log in or sign up to compete for high scores.</p>
+            )}
 
             <StyledCharacter>{score}</StyledCharacter>
             <div>
@@ -63,4 +78,5 @@ export default function GameOver({ history }) {
         </div>
     ) 
 }
+
 

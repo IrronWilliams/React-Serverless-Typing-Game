@@ -8,7 +8,7 @@ import config from './auth_config.json';
 
 /*Wrapping App in ScoreProvider context so all components can have access to its state values.  
 Also wrapping everything in Auth0Provider for authentication. The onRedirectCallback function is 
-used by the redirect_uri for Auth0.  
+used by the redirect_uri for Auth0. audience is used for backend JWT API verification.
 */
 
 const onRedirectCallback = (appState) => {
@@ -26,6 +26,7 @@ ReactDOM.render(
   client_id={config.clientId}
   redirect_uri={window.location.origin}
   onRedirectCallback={onRedirectCallback}
+  audience={config.audience}
 >
   <ScoreProvider>
       <App />
