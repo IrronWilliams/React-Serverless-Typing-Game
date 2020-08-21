@@ -1,14 +1,17 @@
 //destructure the table and function and require in the file 
 const { table, getHighScores } = require('./utils/airtable') 
-const { getAccessTokenFromHeaders } = require('./utils/auth')
+const { getAccessTokenFromHeaders, validateAccessToken } = require('./utils/auth')
 
-//if token not returned, user is not authorized to do this. user has not logged in. not able to log high score
+/*verifying acces token is being passed. if token not returned, user is not authorized 
+to do this. user has not logged in and wont be able to log score*/
 exports.handler = async (event) => {
-    const token = getAccessTokenFromHeaders(event.headers);
-    if (!token) {
+    const token = getAccessTokenFromHeaders(event.headers)
+    const user = await validateAccessToken(token)
+
+    if (!user) {
         return {
             statusCode: 403,
-            body: JSON.stringify({ err: 'User is not logged in' }),
+            body: JSON.stringify({ err: 'Unauthorized' }),
         }
     }
 
@@ -19,7 +22,8 @@ exports.handler = async (event) => {
         } 
     }
 
-    const { score, name } = JSON.parse(event.body) 
+    const { score } = JSON.parse(event.body) 
+    const name = user['https://learnbuildtype/username'];
     if (typeof score === 'undefined' || !name) {  //if (!score || !name) will lead to bad request error because 0 is a falsey value. conditional will assume there is no value
         return {
             statusCode: 400,
