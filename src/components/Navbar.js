@@ -5,11 +5,12 @@ Create an unordered list of nav items. Game and GameOVer links will be reference
 
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { StyledNavbar, StyledNavbrand, StyledNavItems, StyledLink } from '../styled/NavBar'
+import { StyledNavbar, StyledNavbrand, StyledNavItems, StyledLink, StyledButtonLink  } from '../styled/NavBar'
 import { Accent } from '../styled/Random'
 import { useAuth0 } from '../auth'
+import { StyledButton } from '../styled/Buttons'
 
-export default function Navbar() {
+export default function Navbar({toggleTheme}) {
     const { isAuthenticated, loginWithRedirect, logout } = useAuth0() //getting properties from the AuthoContext Provider via auth.js  
     return (
         <StyledNavbar>
@@ -22,17 +23,20 @@ export default function Navbar() {
                 <li><StyledLink to='/'>Home</StyledLink></li>
                 <li><StyledLink to='/highScores'>HighScores</StyledLink></li> 
 
-                {/*Setting onclick handlers. Different functions will run based upon user clicking Login/Logout. Funtions in auth.js  */}
+                {/*Setting onclick handlers. Different functions will run based upon user clicking Login/Logout. Functions in auth.js  */}
                 {!isAuthenticated && (
                     <li>
-                        <button onClick={loginWithRedirect}>Login</button>
+                        <StyledButtonLink onClick={loginWithRedirect}>Login</
+                        StyledButtonLink>
                     </li>
                 )}
                 {isAuthenticated && (
                     <li>
-                        <button onClick={logout}>Logout</button>
+                        <StyledButtonLink onClick={logout}>Logout</
+                        StyledButtonLink>
                     </li>
                 )}
+                <StyledButton onClick={toggleTheme}>Toggle Theme</StyledButton>
 
             </StyledNavItems>
         </StyledNavbar>   

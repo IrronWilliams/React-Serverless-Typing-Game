@@ -36,6 +36,7 @@ export const StyledNavItems = styled.ul`
     display: grid;
     grid-auto-flow: column;
     grid-gap: 20px;
+    align-items: center;
 
 `
 /*Instead of defining an html element like a div, can sytle a component. Styling the <Link> component. To style the link, 
@@ -49,14 +50,24 @@ export const StyledLink = styled(Link)`
     transition: color 200ms;
 
     &:hover {
-        color: #e16365
+        color: var(--accent-color)
     }
-`
+    `
+/*addressing button when theme changes */
+export const StyledButtonLink = styled.button`
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    background: none;
+    &:hover {
+        color: var(--accent-color);
+    }
+    `
 
 
 
-    
-    
+
+
 
 
 

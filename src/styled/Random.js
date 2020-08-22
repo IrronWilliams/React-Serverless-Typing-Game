@@ -2,7 +2,7 @@ import styled from 'styled-components'
 
 /*Adding the color red to word Type in the brand. Replace the span in Navbar.js with Accent*/
 export const Accent = styled.span`
-    color: #e16365;
+    color: var(--accent-color);
 `
 
 /*Increasing font size on title. Update Home.js by replacing h1  */
