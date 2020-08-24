@@ -61,7 +61,7 @@ export default function GameOver({ history }) {
      }, [score, isAuthenticated, getTokenSilently]) 
     return (
         <div>
-            <h1>Game Over</h1>
+            <h1>Game Over!</h1>
             <h2>{scoreMessage}</h2>
 
             {!isAuthenticated && (

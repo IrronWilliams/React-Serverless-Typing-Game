@@ -9,8 +9,8 @@ export default function Home() {
 
     return (
         <div>
-            <StyledTitle>Ready to type?</StyledTitle>
-            <CTA to='/game'>Click or type <Accent>'s'</Accent> to start playing!</CTA>
+            <StyledTitle>How Fast Can You Type?</StyledTitle>
+            <CTA to='/game'>Click here to start playing!</CTA>
         </div>
     )
 }
