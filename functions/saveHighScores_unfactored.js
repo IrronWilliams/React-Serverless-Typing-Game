@@ -1,4 +1,7 @@
-//destructure the table and require in the file 
+/* destructure the table and require in the file 
+function will take in an incoming score from user and decide if score is high enough to store in AirTable. 
+
+*/
 const {table} = require('./utils/airtable')
 
 exports.handler = async (event) => {//want to only receive POST requests
@@ -15,8 +18,8 @@ exports.handler = async (event) => {//want to only receive POST requests
     console.log(body)
     */
 
-    const { score, name } = JSON.parse(event.body) //destructing score and name from the body
-    if (typeof score === 'undefined' || !name) {
+    const { score, name } = JSON.parse(event.body) //destructing score and name from the incoming body
+    if (typeof score === 'undefined' || !name) { //preventing error if score is undefined in event table is blank and there are no scores 
         return {
             statusCode: 405,
             body: JSON.stringify({ err: 'Bad request. Not all the required parameters were passed.' }),
@@ -42,13 +45,21 @@ exports.handler = async (event) => {//want to only receive POST requests
 
         const lowestRecord = formattedRecords[9] 
         
-        /*Update the record with incoming score. Reference table and call the update function and pass it an 
+        /*Use the incoming score and compare against the lowest score in the table. If incoming score is > than the lowest score in AirTable, 
+        then update the lowest record with the name and score of the new incoming record. Take the id of the lowest score in AirTable and replace 
+        with the name and score of the incoming record. The const updateRecord object is creating the new record that will go into the table.  
+        
+        Update the record with incoming score. Reference table and call the update function and pass it an 
         array of items to update. This will create the new record that will go into the table, which will have
         the id and fields properties. The id will come from the lowestRecord and the fields will be the name and
-        score of that record. Then call table.update and pass it an array of records to update. In this case, it 
+        score of the new incoming record. Then call table.update and pass it an array of records to update. In this case, it 
         will be just one record, the updatedRecord. This is asynchronous, returns a promise. If there is a problem,
         manage in the catch/error statement
-        */
+        
+        Lines 63-75 are checking if record should be updated, updating the record and returning the updated record. 
+        The 2nd return in else statement returns an empty object. Can use this else to check on the front-end whether
+        the object that comes back on the body of the 1st return has an id for example. If it does have an id, know there was 
+        a record that was updated and can display appropriately. Can show user if they made it into Top10*/
         if (
             typeof lowestRecord.fields.score === 'undefined' ||
             score > lowestRecord.fields.score
